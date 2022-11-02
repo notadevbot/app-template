@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+    postgredb:
+        image: "postgres:14.5"
+        restart: unless-stopped
+        env_file: ./.env
+        ports:
+            - $POSTGREDB_LOCAL_PORT:$POSTGREDB_DOCKER_PORT
+        environment:
+            - POSTGRES_DB=$POSTGREDB_DATABASE
+            - POSTGRES_USER=$POSTGREDB_USER
+            - POSTGRES_PASSWORD=$POSTGREDB_PASSWORD
+        volumes:
+            - db:/var/lib/postgresql/data
+    backend:
+        depends_on:
+            - postgredb
+        build: ./backend
+        restart: unless-stopped
+        env_file: ./.env
+        ports:
+            - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+        environment:
+            - DB_HOST=postgredb
+            - DB_USER=$POSTGREDB_USER
+            - DB_PASSWORD=$POSTGREDB_PASSWORD
+            - DB_NAME=$POSTGREDB_DATABASE
+            - DB_PORT=$POSTGREDB_DOCKER_PORT
+        stdin_open: true
+        tty: true
+    frontend:
+        depends_on:
+            - backend
+        build:
+            dockerfile: Dockerfile
+            context: ./frontend
+            args:
+                REACT_APP_BACKEND_PORT: $NODE_LOCAL_PORT
+        restart: unless-stopped
+        env_file: ./.env
+        ports:
+            - "80:80"
+        stdin_open: true
+        tty: true
+volumes:
+    db:

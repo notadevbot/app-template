@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"esModuleInterop": true,
+		"sourceMap": true,
+		"allowSyntheticDefaultImports": true,
+		"declaration": true,
+		"lib": ["DOM", "DOM.Iterable", "ESNext"],
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"outDir": "dist"
+	},
+	"include": ["src/**/*"]
+}
